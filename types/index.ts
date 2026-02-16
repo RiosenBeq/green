@@ -7,7 +7,9 @@ export interface Fixture {
     operator: string;
     cpDate: string;
     layFrom: string;
+    layFromTime: string;
     layTo: string;
+    layToTime: string;
     loadPort: string;
     dischPort: string;
     cargo: string;
@@ -32,6 +34,7 @@ export interface Fixture {
     claimRec: string;
     claimFwd: string;
     archived?: boolean;
+    cancelled?: boolean;
     createdAt?: string;
     updatedAt?: string;
 }

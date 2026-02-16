@@ -28,6 +28,8 @@ interface FixtureContextType {
     updateFixture: (id: string, updates: Partial<Fixture>) => void;
     archiveFixture: (id: string) => void;
     restoreFixture: (id: string) => void;
+    cancelFixture: (id: string) => void;
+    uncancelFixture: (id: string) => void;
     deleteFixture: (id: string) => void;
     getFixture: (id: string) => Fixture | undefined;
 }
@@ -36,8 +38,8 @@ const FixtureContext = createContext<FixtureContextType | undefined>(undefined);
 
 export function FixtureProvider({ children }: { children: React.ReactNode }) {
     const [fixtures, setFixtures] = useState<Fixture[]>(FIXTURE_LIST_DATA);
-    const [istanbulFixtures] = useState<Fixture[]>(ISTANBUL_DATA);
-    const [dubaiFixtures] = useState<Fixture[]>(DUBAI_DATA);
+    const [istanbulFixtures, setIstanbulFixtures] = useState<Fixture[]>(ISTANBUL_DATA);
+    const [dubaiFixtures, setDubaiFixtures] = useState<Fixture[]>(DUBAI_DATA);
     const [istDemurrage] = useState<Fixture[]>(IST_DEMURRAGE_DATA);
     const [dubDemurrage] = useState<Fixture[]>(DUB_DEMURRAGE_DATA);
 
@@ -46,21 +48,27 @@ export function FixtureProvider({ children }: { children: React.ReactNode }) {
     };
 
     const updateFixture = (id: string, updates: Partial<Fixture>) => {
-        setFixtures((prev) =>
-            prev.map((f) => (f.id === id ? { ...f, ...updates } : f))
-        );
+        const doUpdate = (list: Fixture[]) =>
+            list.map((f) => (f.id === id ? { ...f, ...updates } : f));
+        setFixtures(doUpdate);
+        setIstanbulFixtures(doUpdate);
+        setDubaiFixtures(doUpdate);
     };
 
     const archiveFixture = (id: string) => {
-        setFixtures((prev) =>
-            prev.map((f) => (f.id === id ? { ...f, archived: true } : f))
-        );
+        updateFixture(id, { archived: true });
     };
 
     const restoreFixture = (id: string) => {
-        setFixtures((prev) =>
-            prev.map((f) => (f.id === id ? { ...f, archived: false } : f))
-        );
+        updateFixture(id, { archived: false });
+    };
+
+    const cancelFixture = (id: string) => {
+        updateFixture(id, { cancelled: true });
+    };
+
+    const uncancelFixture = (id: string) => {
+        updateFixture(id, { cancelled: false });
     };
 
     const deleteFixture = (id: string) => {
@@ -84,6 +92,8 @@ export function FixtureProvider({ children }: { children: React.ReactNode }) {
                 updateFixture,
                 archiveFixture,
                 restoreFixture,
+                cancelFixture,
+                uncancelFixture,
                 deleteFixture,
                 getFixture,
             }}

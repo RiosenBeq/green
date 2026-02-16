@@ -7,6 +7,12 @@ import { Globe } from "lucide-react";
 export default function DubaiPage() {
     const { dubaiFixtures } = useFixtures();
 
+    const sortedFixtures = [...dubaiFixtures].sort((a, b) => {
+        const numA = parseInt(a.no.match(/\d+/)?.at(0) || "0");
+        const numB = parseInt(b.no.match(/\d+/)?.at(0) || "0");
+        return numA - numB;
+    });
+
     return (
         <div style={{ display: "flex", flexDirection: "column", gap: 20 }} className="anim-fade">
             <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
@@ -20,7 +26,7 @@ export default function DubaiPage() {
                     </p>
                 </div>
             </div>
-            <FixtureTable fixtures={dubaiFixtures} />
+            <FixtureTable fixtures={sortedFixtures} />
         </div>
     );
 }
