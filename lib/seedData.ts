@@ -2,7 +2,7 @@ import { Fixture } from "@/types";
 
 export const FIXTURE_LIST_DATA: Fixture[] = [
   {
-    id: "FL-9",
+    id: "FL-1",
     no: "9",
     vessel: "GUNECE",
     broker: "OZGUR",
@@ -37,7 +37,7 @@ export const FIXTURE_LIST_DATA: Fixture[] = [
     archived: false,
   },
   {
-    id: "FL-5",
+    id: "FL-2",
     no: "5",
     vessel: "BOW SAGA",
     broker: "GUROL",
@@ -72,7 +72,7 @@ export const FIXTURE_LIST_DATA: Fixture[] = [
     archived: false,
   },
   {
-    id: "FL-2",
+    id: "FL-3",
     no: "2",
     vessel: "SEA HARVEST",
     broker: "YOAN",
@@ -107,7 +107,7 @@ export const FIXTURE_LIST_DATA: Fixture[] = [
     archived: false,
   },
   {
-    id: "FL-8",
+    id: "FL-4",
     no: "8",
     vessel: "BLUE BIRD",
     broker: "BATU",
@@ -142,7 +142,7 @@ export const FIXTURE_LIST_DATA: Fixture[] = [
     archived: false,
   },
   {
-    id: "FL-7",
+    id: "FL-5",
     no: "7",
     vessel: "BANDIRMA",
     broker: "OZGUR",
@@ -177,7 +177,7 @@ export const FIXTURE_LIST_DATA: Fixture[] = [
     archived: false,
   },
   {
-    id: "FL-4",
+    id: "FL-6",
     no: "4",
     vessel: "HEAVEN",
     broker: "GUROL",
@@ -212,7 +212,7 @@ export const FIXTURE_LIST_DATA: Fixture[] = [
     archived: false,
   },
   {
-    id: "FL-3",
+    id: "FL-7",
     no: "3",
     vessel: "BONITA AKI",
     broker: "YOAN",
@@ -247,7 +247,7 @@ export const FIXTURE_LIST_DATA: Fixture[] = [
     archived: false,
   },
   {
-    id: "FL-4B",
+    id: "FL-8",
     no: "4",
     vessel: "CHEMICAL MASTER",
     broker: "BATU",
@@ -282,7 +282,7 @@ export const FIXTURE_LIST_DATA: Fixture[] = [
     archived: false,
   },
   {
-    id: "FL-1",
+    id: "FL-9",
     no: "1",
     vessel: "KOREA CHEMI",
     broker: "YOAN",
@@ -317,7 +317,7 @@ export const FIXTURE_LIST_DATA: Fixture[] = [
     archived: false,
   },
   {
-    id: "FL-1B",
+    id: "FL-10",
     no: "1",
     vessel: "FORTUO",
     broker: "EMRE",
@@ -352,7 +352,7 @@ export const FIXTURE_LIST_DATA: Fixture[] = [
     archived: false,
   },
   {
-    id: "FL-50",
+    id: "FL-11",
     no: "50",
     vessel: "ALANGOVA",
     broker: "GUROL",
@@ -925,12 +925,13 @@ export const IST_DEMURRAGE_DATA: Fixture[] = [
 export const DUB_DEMURRAGE_DATA: Fixture[] = [
 ];
 
-// Combined seed data: Fixture List entries are the "active" ones
 export const ALL_FIXTURES: Fixture[] = [...FIXTURE_LIST_DATA];
 
 export const OPS_USERS = [
   { name: "BERK", email: "berk@gnbmar.com", role: "Operator" },
   { name: "DUYGU", email: "duygu@gnbmar.com", role: "Operator" },
+  { name: "GIZEM", email: "gizem@gnbmar.com", role: "Operator" },
+  { name: "EZGI", email: "ezgi@gnbmar.com", role: "Operator" },
   { name: "BATU", email: "batu@gnbmar.com", role: "Broker" },
   { name: "EMRE", email: "emre@gnbmar.com", role: "Broker" },
   { name: "GUROL", email: "gurol@gnbmar.com", role: "Broker" },

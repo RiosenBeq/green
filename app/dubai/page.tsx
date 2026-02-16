@@ -1,23 +1,25 @@
 "use client";
 
-import FixtureTable from "@/components/FixtureTable";
 import { useFixtures } from "@/context/FixtureContext";
+import FixtureTable from "@/components/FixtureTable";
+import { Globe } from "lucide-react";
 
 export default function DubaiPage() {
     const { dubaiFixtures } = useFixtures();
 
     return (
-        <div className="space-y-6 anim-fade">
-            <h2 style={{ fontSize: 20, fontWeight: 700 }}>
-                🌍 Dubai Clean Fixtures
-                <span style={{
-                    marginLeft: 10, fontSize: 12, color: "var(--text-muted)",
-                    fontFamily: "var(--font-mono)", background: "var(--bg-input)",
-                    padding: "2px 10px", borderRadius: 20
-                }}>
-                    {dubaiFixtures.length}
-                </span>
-            </h2>
+        <div style={{ display: "flex", flexDirection: "column", gap: 20 }} className="anim-fade">
+            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                <div style={{ width: 36, height: 36, borderRadius: 10, background: "#f59e0b18", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <Globe size={18} style={{ color: "#f59e0b" }} />
+                </div>
+                <div>
+                    <h1 style={{ fontSize: 20, fontWeight: 800, margin: 0 }}>Dubai Clean Fixtures</h1>
+                    <p style={{ fontSize: 12, color: "var(--text-muted)", margin: 0 }}>
+                        {dubaiFixtures.length} fixtures · GUROL, YOAN
+                    </p>
+                </div>
+            </div>
             <FixtureTable fixtures={dubaiFixtures} />
         </div>
     );

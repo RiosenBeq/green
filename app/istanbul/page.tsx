@@ -1,23 +1,25 @@
 "use client";
 
-import FixtureTable from "@/components/FixtureTable";
 import { useFixtures } from "@/context/FixtureContext";
+import FixtureTable from "@/components/FixtureTable";
+import { Anchor } from "lucide-react";
 
 export default function IstanbulPage() {
     const { istanbulFixtures } = useFixtures();
 
     return (
-        <div className="space-y-6 anim-fade">
-            <h2 style={{ fontSize: 20, fontWeight: 700 }}>
-                ⚓ Istanbul Clean Fixtures
-                <span style={{
-                    marginLeft: 10, fontSize: 12, color: "var(--text-muted)",
-                    fontFamily: "var(--font-mono)", background: "var(--bg-input)",
-                    padding: "2px 10px", borderRadius: 20
-                }}>
-                    {istanbulFixtures.length}
-                </span>
-            </h2>
+        <div style={{ display: "flex", flexDirection: "column", gap: 20 }} className="anim-fade">
+            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                <div style={{ width: 36, height: 36, borderRadius: 10, background: "#60a5fa18", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <Anchor size={18} style={{ color: "#60a5fa" }} />
+                </div>
+                <div>
+                    <h1 style={{ fontSize: 20, fontWeight: 800, margin: 0 }}>Istanbul Clean Fixtures</h1>
+                    <p style={{ fontSize: 12, color: "var(--text-muted)", margin: 0 }}>
+                        {istanbulFixtures.length} fixtures · BATU, EMRE, OZGUR
+                    </p>
+                </div>
+            </div>
             <FixtureTable fixtures={istanbulFixtures} />
         </div>
     );

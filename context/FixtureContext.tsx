@@ -1,7 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState } from "react";
-import { Fixture } from "@/types";
+import { Fixture, DUBAI_BROKERS } from "@/types";
 import {
     FIXTURE_LIST_DATA,
     ISTANBUL_DATA,
@@ -11,17 +11,19 @@ import {
     OPS_USERS,
 } from "@/lib/seedData";
 
+interface OpsUser {
+    name: string;
+    email: string;
+    role: string;
+}
+
 interface FixtureContextType {
-    // Fixture List = Active/Ongoing fixtures
     fixtures: Fixture[];
-    // Regional data (archived per-office view)
     istanbulFixtures: Fixture[];
     dubaiFixtures: Fixture[];
     istDemurrage: Fixture[];
     dubDemurrage: Fixture[];
-    // OPS team
-    opsUsers: typeof OPS_USERS;
-    // CRUD
+    opsUsers: OpsUser[];
     addFixture: (fixture: Fixture) => void;
     updateFixture: (id: string, updates: Partial<Fixture>) => void;
     archiveFixture: (id: string) => void;
