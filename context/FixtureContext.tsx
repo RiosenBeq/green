@@ -32,6 +32,13 @@ interface FixtureContextType {
     uncancelFixture: (id: string) => void;
     deleteFixture: (id: string) => void;
     getFixture: (id: string) => Fixture | undefined;
+    uniqueEntities: {
+        vessels: string[];
+        charterers: string[];
+        owners: string[];
+        ports: string[];
+    };
+    getEntityAffinities: (vesselName: string) => any;
 }
 
 const FixtureContext = createContext<FixtureContextType | undefined>(undefined);
@@ -86,6 +93,28 @@ export function FixtureProvider({ children }: { children: React.ReactNode }) {
         return fixtures.find((f) => f.id === id);
     };
 
+    // Derived entity lists for autocomplete
+    const uniqueEntities = {
+        vessels: Array.from(new Set(fixtures.map(f => f.vessel))).filter(Boolean),
+        charterers: Array.from(new Set(fixtures.map(f => f.charterer))).filter(Boolean),
+        owners: Array.from(new Set(fixtures.map(f => f.owner))).filter(Boolean),
+        ports: Array.from(new Set([...fixtures.map(f => f.loadPort), ...fixtures.map(f => f.dischPort)])).filter(Boolean),
+    };
+
+    // Helper to find "affinities" (e.g., typical owner for a vessel)
+    const getEntityAffinities = (vesselName: string) => {
+        const past = fixtures.find(f => f.vessel.toUpperCase() === vesselName.toUpperCase());
+        if (past) {
+            return {
+                owner: past.owner,
+                charterer: past.charterer,
+                broker: past.broker,
+                operator: past.operator
+            };
+        }
+        return null;
+    };
+
     return (
         <FixtureContext.Provider
             value={{
@@ -103,6 +132,8 @@ export function FixtureProvider({ children }: { children: React.ReactNode }) {
                 uncancelFixture,
                 deleteFixture,
                 getFixture,
+                uniqueEntities,
+                getEntityAffinities
             }}
         >
             {children}

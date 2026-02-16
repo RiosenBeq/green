@@ -46,6 +46,8 @@ export interface Fixture {
     // Status
     archived?: boolean;
     cancelled?: boolean;
+    claimRec?: string;
+    claimFwd?: string;
 }
 
 export interface Operator {

@@ -21,6 +21,8 @@ export const metadata: Metadata = {
   description: "Advanced Brokerage Management System",
 };
 
+import Sidebar from "@/components/Sidebar";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -30,10 +32,15 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${dmSans.variable} ${jetBrainsMono.variable}`}>
         <Providers>
-          <Header />
-          <main className="main">
-            {children}
-          </main>
+          <div className="app-container">
+            <Sidebar />
+            <div className="content-wrapper">
+              <Header />
+              <main className="main">
+                {children}
+              </main>
+            </div>
+          </div>
         </Providers>
       </body>
     </html>

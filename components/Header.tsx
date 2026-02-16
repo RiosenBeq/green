@@ -21,18 +21,14 @@ export default function Header() {
     <header className="header">
       {/* Top Bar */}
       <div className="header-top">
-        <Link href="/" className="logo">
-          <div className="logo-mark">
-            <svg viewBox="0 0 24 24" className="w-5 h-5 fill-white">
-              <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" />
-              <path d="M12 2L4 8h16L12 2z" fill="rgba(255,255,255,.7)" />
-            </svg>
-          </div>
-          <div>
-            <div className="logo-name">GREEN & BLACK</div>
-            <div className="logo-desc">Chemical Tanker Brokerage</div>
-          </div>
-        </Link>
+        <div className="flex items-center gap-4">
+          <span className="text-[10px] font-black text-[var(--green-500)] uppercase tracking-[0.3em] bg-[var(--green-glow)] px-3 py-1 rounded-full border border-[var(--green-500)/10]">
+            System Online
+          </span>
+          <span className="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-widest">
+            {pathname.split('/').filter(Boolean).at(-1) || 'Overview'}
+          </span>
+        </div>
 
         <div className="header-right">
           <button className="btn btn-ghost btn-sm" onClick={() => alert('Search coming soon')}>
@@ -52,9 +48,6 @@ export default function Header() {
 
       {/* Navigation Tabs */}
       <nav className="nav">
-        <Link href="/" className={`nav-tab ${isActive("/") ? "active" : ""}`}>
-          📊 Dashboard
-        </Link>
         <Link href="/fixtures" className={`nav-tab ${isActive("/fixtures") ? "active" : ""}`}>
           📋 Fixtures <span className="nav-badge">{activeFixtures.length}</span>
         </Link>

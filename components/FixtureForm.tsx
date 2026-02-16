@@ -29,7 +29,7 @@ const DEM_STATUS = ['Unpaid', 'Pending', 'Paid'];
 
 export default function FixtureForm({ initialData, isEdit = false }: FixtureFormProps) {
     const router = useRouter();
-    const { addFixture, updateFixture } = useFixtures();
+    const { addFixture, updateFixture, uniqueEntities, getEntityAffinities } = useFixtures();
 
     const [formData, setFormData] = useState<Fixture>(
         initialData || {
@@ -40,6 +40,7 @@ export default function FixtureForm({ initialData, isEdit = false }: FixtureForm
             coBroker: "",
             operator: "",
             cpDate: new Date().toISOString().split('T')[0],
+            // ... (rest of initial state remains the same)
             layFrom: "",
             layFromTime: "16:00",
             layTo: "",
@@ -87,12 +88,42 @@ export default function FixtureForm({ initialData, isEdit = false }: FixtureForm
             setFormData(prev => ({ ...prev, [name]: checked }));
         } else {
             setFormData(prev => ({ ...prev, [name]: value }));
+
+            // Auto-fill logic when vessel changes
+            if (name === 'vessel') {
+                const affinities = getEntityAffinities(value);
+                if (affinities) {
+                    setFormData(prev => ({
+                        ...prev,
+                        vessel: value.toUpperCase(),
+                        owner: affinities.owner || prev.owner,
+                        charterer: affinities.charterer || prev.charterer,
+                        broker: affinities.broker || prev.broker,
+                        operator: affinities.operator || prev.operator
+                    }));
+                }
+            }
         }
     };
 
     const handleUpper = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
-        setFormData(prev => ({ ...prev, [name]: value.toUpperCase() }));
+        const upperVal = value.toUpperCase();
+        setFormData(prev => ({ ...prev, [name]: upperVal }));
+
+        // Check for autofill even on upper conversion
+        if (name === 'vessel') {
+            const affinities = getEntityAffinities(upperVal);
+            if (affinities) {
+                setFormData(prev => ({
+                    ...prev,
+                    owner: affinities.owner || prev.owner,
+                    charterer: affinities.charterer || prev.charterer,
+                    broker: affinities.broker || prev.broker,
+                    operator: affinities.operator || prev.operator
+                }));
+            }
+        }
     };
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -166,25 +197,49 @@ export default function FixtureForm({ initialData, isEdit = false }: FixtureForm
                         </div>
                         <div className={inputContainerStyle}>
                             <label className={labelStyle}>Vessel Name *</label>
-                            <input name="vessel" value={formData.vessel} onChange={handleUpper} className={`${inputStyle} font-black text-[var(--green-400)]`} required placeholder="Enter ship name" />
+                            <input
+                                name="vessel"
+                                value={formData.vessel}
+                                onChange={handleUpper}
+                                className={`${inputStyle} font-black text-[var(--green-400)]`}
+                                required
+                                placeholder="Enter ship name"
+                                list="vessels-list"
+                            />
                         </div>
                         <div className={inputContainerStyle}>
                             <label className={labelStyle}>Broker *</label>
-                            <select name="broker" value={formData.broker} onChange={handleChange} className={selectStyle} required>
-                                <option value="">Select Broker</option>
-                                {ALL_BROKERS.map(b => <option key={b} value={b}>{b}</option>)}
-                            </select>
+                            <input
+                                name="broker"
+                                value={formData.broker}
+                                onChange={handleUpper}
+                                className={inputStyle}
+                                required
+                                placeholder="Select or type broker"
+                                list="brokers-list"
+                            />
                         </div>
                         <div className={inputContainerStyle}>
                             <label className={labelStyle}>Co-Broker</label>
-                            <input name="coBroker" value={formData.coBroker} onChange={handleUpper} className={inputStyle} placeholder="Optional co-broker" />
+                            <input
+                                name="coBroker"
+                                value={formData.coBroker}
+                                onChange={handleUpper}
+                                className={inputStyle}
+                                placeholder="Optional co-broker"
+                                list="brokers-list"
+                            />
                         </div>
                         <div className={inputContainerStyle}>
                             <label className={labelStyle}>Operator</label>
-                            <select name="operator" value={formData.operator} onChange={handleChange} className={selectStyle}>
-                                <option value="">Select Operator</option>
-                                {OPERATORS.map(o => <option key={o} value={o}>{o}</option>)}
-                            </select>
+                            <input
+                                name="operator"
+                                value={formData.operator}
+                                onChange={handleUpper}
+                                className={inputStyle}
+                                placeholder="Select or type operator"
+                                list="operators-list"
+                            />
                         </div>
                         <div className={inputContainerStyle}>
                             <label className={labelStyle}>C/P Date</label>
@@ -203,11 +258,11 @@ export default function FixtureForm({ initialData, isEdit = false }: FixtureForm
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div className={inputContainerStyle}>
                                 <label className={labelStyle}>Load Port</label>
-                                <input name="loadPort" value={formData.loadPort} onChange={handleUpper} className={inputStyle} placeholder="Loading port" />
+                                <input name="loadPort" value={formData.loadPort} onChange={handleUpper} className={inputStyle} placeholder="Loading port" list="ports-list" />
                             </div>
                             <div className={inputContainerStyle}>
                                 <label className={labelStyle}>Discharge Port</label>
-                                <input name="dischPort" value={formData.dischPort} onChange={handleUpper} className={inputStyle} placeholder="Discharge port" />
+                                <input name="dischPort" value={formData.dischPort} onChange={handleUpper} className={inputStyle} placeholder="Discharge port" list="ports-list" />
                             </div>
                             <div className="col-span-full grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
                                 <div className={inputContainerStyle}>
@@ -241,6 +296,14 @@ export default function FixtureForm({ initialData, isEdit = false }: FixtureForm
                             <div className={inputContainerStyle}>
                                 <label className={labelStyle}>Quantity</label>
                                 <input name="quantity" value={formData.quantity} onChange={handleChange} className={inputStyle} placeholder="e.g. 5000 MT" />
+                            </div>
+                            <div className={inputContainerStyle}>
+                                <label className={labelStyle}>Charterer</label>
+                                <input name="charterer" value={formData.charterer} onChange={handleUpper} className={inputStyle} placeholder="e.g. KOLMAR" list="charterers-list" />
+                            </div>
+                            <div className={inputContainerStyle}>
+                                <label className={labelStyle}>Owner</label>
+                                <input name="owner" value={formData.owner} onChange={handleUpper} className={inputStyle} placeholder="e.g. SC SHIPPING" list="owners-list" />
                             </div>
                             <div className={inputContainerStyle}>
                                 <label className={labelStyle}>Freight</label>
@@ -384,6 +447,25 @@ export default function FixtureForm({ initialData, isEdit = false }: FixtureForm
                     </button>
                 </div>
             </form>
-        </div>
+            {/* Suggestions DataLists */}
+            <datalist id="vessels-list">
+                {uniqueEntities.vessels.map(v => <option key={v} value={v} />)}
+            </datalist>
+            <datalist id="charterers-list">
+                {uniqueEntities.charterers.map(c => <option key={c} value={c} />)}
+            </datalist>
+            <datalist id="owners-list">
+                {uniqueEntities.owners.map(o => <option key={o} value={o} />)}
+            </datalist>
+            <datalist id="brokers-list">
+                {ALL_BROKERS.map(b => <option key={b} value={b} />)}
+            </datalist>
+            <datalist id="operators-list">
+                {OPERATORS.map(o => <option key={o} value={o} />)}
+            </datalist>
+            <datalist id="ports-list">
+                {uniqueEntities.ports.map(p => <option key={p} value={p} />)}
+            </datalist>
+        </div >
     );
 }

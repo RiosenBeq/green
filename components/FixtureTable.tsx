@@ -188,8 +188,8 @@ export default function FixtureTable({ fixtures, isDemurrage = false, onArchive,
                                             <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
                                                 <span style={{ fontSize: 10, fontWeight: 800, padding: "2px 6px", borderRadius: 4, background: `${brokerColor(f.broker)}20`, color: brokerColor(f.broker), width: "fit-content" }}>{f.broker}</span>
                                                 <div style={{ display: "flex", gap: 3 }}>
-                                                    {riskF !== 'none' && <div title="Freight Comm Risk" style={{ width: 6, h: 6, borderRadius: '50%', background: riskF === 'high' ? '#ef4444' : riskF === 'medium' ? '#f59e0b' : '#22c55e' }} />}
-                                                    {riskD !== 'none' && <div title="Demurrage Comm Risk" style={{ width: 6, h: 6, borderRadius: '50%', border: '1px solid currentColor', background: riskD === 'high' ? '#ef4444' : riskD === 'medium' ? '#f59e0b' : '#22c55e' }} />}
+                                                    {riskF !== 'none' && <div title="Freight Comm Risk" style={{ width: 6, height: 6, borderRadius: '50%', background: riskF === 'high' ? '#ef4444' : riskF === 'medium' ? '#f59e0b' : '#22c55e' }} />}
+                                                    {riskD !== 'none' && <div title="Demurrage Comm Risk" style={{ width: 6, height: 6, borderRadius: '50%', border: '1px solid currentColor', background: riskD === 'high' ? '#ef4444' : riskD === 'medium' ? '#f59e0b' : '#22c55e' }} />}
                                                 </div>
                                             </div>
                                             {f.coBroker && <span style={{ fontSize: 9, color: "var(--text-muted)" }}>CO: {f.coBroker}</span>}
