@@ -1,66 +1,62 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+"use client";
 
-export default function Home() {
+import { Activity, Anchor, Globe, PieChart, TrendingUp } from "lucide-react";
+import StatCard from "@/components/StatCard";
+import BrokerChart from "@/components/BrokerChart";
+import LaycanList from "@/components/LaycanList";
+import { DUBAI_BROKERS } from "@/types";
+import { useFixtures } from "@/context/FixtureContext";
+
+export default function DashboardPage() {
+  const { fixtures, istanbulFixtures, dubaiFixtures } = useFixtures();
+
+  // Only count non-archived fixtures for stats
+  const activeFixtures = fixtures.filter((f) => !f.archived);
+
+  const totalFixtures = activeFixtures.length;
+  const istCount = istanbulFixtures.length;
+  const dubCount = dubaiFixtures.length;
+  const demCount = activeFixtures.filter((f) => f.hasDem).length;
+
+  // This month's fixtures
+  const now = new Date();
+  const thisMonth = activeFixtures.filter((f) => {
+    if (!f.cpDate) return false;
+    const d = new Date(f.cpDate);
+    return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+  }).length;
+
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className={styles.intro}>
-          <h1>To get started, edit the page.tsx file.</h1>
-          <p>
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div className="space-y-6 anim-fade">
+      {/* KPI Row */}
+      <div className="stat-row">
+        <StatCard label="Total Fixtures" value={totalFixtures} icon="📊" color="var(--green-500)" />
+        <StatCard label="Istanbul" value={istCount} icon="⚓" color="var(--green-500)" />
+        <StatCard label="Dubai" value={dubCount} icon="🌍" color="var(--blue-500)" />
+        <StatCard label="Demurrage" value={demCount} icon="⏰" color="var(--purple-500)" />
+        <StatCard label="This Month" value={thisMonth} icon="📅" color="var(--amber-500)" />
+      </div>
+
+      {/* Charts */}
+      <div className="dash-grid">
+        {/* Broker Performance */}
+        <div className="panel">
+          <div className="panel-title">
+            <TrendingUp size={18} className="text-[var(--green-500)]" />
+            Broker Performance
+          </div>
+          <BrokerChart fixtures={activeFixtures} />
         </div>
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className={styles.secondary}
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+
+        {/* Upcoming Laycans */}
+        <div className="panel">
+          <div className="panel-title">
+            <Anchor size={18} className="text-[var(--green-500)]" />
+            Upcoming Laycans
+          </div>
+          <LaycanList fixtures={activeFixtures} />
         </div>
-      </main>
+      </div>
     </div>
   );
 }
