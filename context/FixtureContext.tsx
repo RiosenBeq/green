@@ -19,10 +19,13 @@ interface OpsUser {
 
 interface FixtureContextType {
     fixtures: Fixture[];
-    istanbulFixtures: Fixture[];
-    dubaiFixtures: Fixture[];
-    istDemurrage: Fixture[];
-    dubDemurrage: Fixture[];
+    searchQuery: string;
+    setSearchQuery: (query: string) => void;
+    filteredFixtures: Fixture[];
+    filteredIstanbul: Fixture[];
+    filteredDubai: Fixture[];
+    filteredIstDemurrage: Fixture[];
+    filteredDubDemurrage: Fixture[];
     opsUsers: OpsUser[];
     addFixture: (fixture: Fixture) => void;
     updateFixture: (id: string, updates: Partial<Fixture>) => void;
@@ -44,11 +47,42 @@ interface FixtureContextType {
 const FixtureContext = createContext<FixtureContextType | undefined>(undefined);
 
 export function FixtureProvider({ children }: { children: React.ReactNode }) {
-    const [fixtures, setFixtures] = useState<Fixture[]>(FIXTURE_LIST_DATA);
-    const [istanbulFixtures, setIstanbulFixtures] = useState<Fixture[]>(ISTANBUL_DATA);
-    const [dubaiFixtures, setDubaiFixtures] = useState<Fixture[]>(DUBAI_DATA);
-    const [istDemurrage, setIstDemurrage] = useState<Fixture[]>(IST_DEMURRAGE_DATA);
-    const [dubDemurrage, setDubDemurrage] = useState<Fixture[]>(DUB_DEMURRAGE_DATA);
+    const [fixtures, setFixtures] = useState<Fixture[]>(() =>
+        [...FIXTURE_LIST_DATA].sort((a, b) => (b.id || "").localeCompare(a.id || ""))
+    );
+    const [istanbulFixtures, setIstanbulFixtures] = useState<Fixture[]>(() =>
+        [...ISTANBUL_DATA].sort((a, b) => (b.id || "").localeCompare(a.id || ""))
+    );
+    const [dubaiFixtures, setDubaiFixtures] = useState<Fixture[]>(() =>
+        [...DUBAI_DATA].sort((a, b) => (b.id || "").localeCompare(a.id || ""))
+    );
+    const [istDemurrage, setIstDemurrage] = useState<Fixture[]>(() =>
+        [...IST_DEMURRAGE_DATA].sort((a, b) => (b.id || "").localeCompare(a.id || ""))
+    );
+    const [dubDemurrage, setDubDemurrage] = useState<Fixture[]>(() =>
+        [...DUB_DEMURRAGE_DATA].sort((a, b) => (b.id || "").localeCompare(a.id || ""))
+    );
+
+    const [searchQuery, setSearchQuery] = useState("");
+
+    const filterFixtures = (list: Fixture[]) => {
+        if (!searchQuery) return list;
+        const lowQuery = searchQuery.toLowerCase();
+        return list.filter(f =>
+            f.vessel?.toLowerCase().includes(lowQuery) ||
+            f.charterer?.toLowerCase().includes(lowQuery) ||
+            f.loadPort?.toLowerCase().includes(lowQuery) ||
+            f.dischPort?.toLowerCase().includes(lowQuery) ||
+            f.id?.toLowerCase().includes(lowQuery) ||
+            f.owner?.toLowerCase().includes(lowQuery)
+        );
+    };
+
+    const filteredFixtures = filterFixtures(fixtures);
+    const filteredIstanbul = filterFixtures(istanbulFixtures);
+    const filteredDubai = filterFixtures(dubaiFixtures);
+    const filteredIstDemurrage = filterFixtures(istDemurrage);
+    const filteredDubDemurrage = filterFixtures(dubDemurrage);
 
     const addFixture = (fixture: Fixture) => {
         setFixtures((prev) => [fixture, ...prev]);
@@ -119,10 +153,13 @@ export function FixtureProvider({ children }: { children: React.ReactNode }) {
         <FixtureContext.Provider
             value={{
                 fixtures,
-                istanbulFixtures,
-                dubaiFixtures,
-                istDemurrage,
-                dubDemurrage,
+                searchQuery,
+                setSearchQuery,
+                filteredFixtures,
+                filteredIstanbul,
+                filteredDubai,
+                filteredIstDemurrage,
+                filteredDubDemurrage,
                 opsUsers: OPS_USERS,
                 addFixture,
                 updateFixture,

@@ -5,12 +5,12 @@ import FixtureTable from "@/components/FixtureTable";
 import { Anchor } from "lucide-react";
 
 export default function IstanbulPage() {
-    const { istanbulFixtures } = useFixtures();
+    const { filteredIstanbul } = useFixtures();
 
-    const sortedFixtures = [...istanbulFixtures].sort((a, b) => {
+    const sortedFixtures = [...filteredIstanbul].sort((a, b) => {
         const numA = parseInt(a.no.match(/\d+/)?.at(0) || "0");
         const numB = parseInt(b.no.match(/\d+/)?.at(0) || "0");
-        return numA - numB;
+        return numB - numA; // Latest (highest number) first
     });
 
     return (
@@ -22,7 +22,7 @@ export default function IstanbulPage() {
                 <div>
                     <h1 style={{ fontSize: 20, fontWeight: 800, margin: 0 }}>Istanbul Clean Fixtures</h1>
                     <p style={{ fontSize: 12, color: "var(--text-muted)", margin: 0 }}>
-                        {istanbulFixtures.length} fixtures · BATU, EMRE, OZGUR
+                        {filteredIstanbul.length} fixtures · BATU, EMRE, OZGUR
                     </p>
                 </div>
             </div>

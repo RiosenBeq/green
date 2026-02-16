@@ -5,12 +5,12 @@ import FixtureTable from "@/components/FixtureTable";
 import { Globe } from "lucide-react";
 
 export default function DubaiPage() {
-    const { dubaiFixtures } = useFixtures();
+    const { filteredDubai } = useFixtures();
 
-    const sortedFixtures = [...dubaiFixtures].sort((a, b) => {
+    const sortedFixtures = [...filteredDubai].sort((a, b) => {
         const numA = parseInt(a.no.match(/\d+/)?.at(0) || "0");
         const numB = parseInt(b.no.match(/\d+/)?.at(0) || "0");
-        return numA - numB;
+        return numB - numA; // Latest (highest number) first
     });
 
     return (
@@ -22,7 +22,7 @@ export default function DubaiPage() {
                 <div>
                     <h1 style={{ fontSize: 20, fontWeight: 800, margin: 0 }}>Dubai Clean Fixtures</h1>
                     <p style={{ fontSize: 12, color: "var(--text-muted)", margin: 0 }}>
-                        {dubaiFixtures.length} fixtures · GUROL, YOAN
+                        {filteredDubai.length} fixtures · GUROL, YOAN
                     </p>
                 </div>
             </div>

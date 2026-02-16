@@ -6,10 +6,10 @@ import FixtureTable from "@/components/FixtureTable";
 import { Clock, Anchor, Globe } from "lucide-react";
 
 export default function DemurragePage() {
-    const { istDemurrage, dubDemurrage } = useFixtures();
+    const { filteredIstDemurrage, filteredDubDemurrage } = useFixtures();
     const [activeTab, setActiveTab] = useState<"istanbul" | "dubai">("istanbul");
 
-    const data = activeTab === "istanbul" ? istDemurrage : dubDemurrage;
+    const data = activeTab === "istanbul" ? filteredIstDemurrage : filteredDubDemurrage;
 
     return (
         <div style={{ display: "flex", flexDirection: "column", gap: 20 }} className="anim-fade">
@@ -20,7 +20,7 @@ export default function DemurragePage() {
                 <div>
                     <h1 style={{ fontSize: 20, fontWeight: 800, margin: 0 }}>Demurrage Claims</h1>
                     <p style={{ fontSize: 12, color: "var(--text-muted)", margin: 0 }}>
-                        {istDemurrage.length + dubDemurrage.length} total claims
+                        {filteredIstDemurrage.length + filteredDubDemurrage.length} total claims
                     </p>
                 </div>
             </div>
@@ -56,7 +56,7 @@ export default function DemurragePage() {
                             fontWeight: 700,
                         }}
                     >
-                        {istDemurrage.length}
+                        {filteredIstDemurrage.length}
                     </span>
                 </button>
                 <button
@@ -88,7 +88,7 @@ export default function DemurragePage() {
                             fontWeight: 700,
                         }}
                     >
-                        {dubDemurrage.length}
+                        {filteredDubDemurrage.length}
                     </span>
                 </button>
             </div>

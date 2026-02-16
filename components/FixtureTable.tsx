@@ -43,18 +43,26 @@ const OP_COLORS: Record<string, string> = {
 };
 
 export default function FixtureTable({ fixtures, isDemurrage = false, onArchive, onRestore }: FixtureTableProps) {
-    const { updateFixture, cancelFixture, uncancelFixture, deleteFixture } = useFixtures();
-    const [term, setTerm] = useState("");
+    const { updateFixture, cancelFixture, uncancelFixture, deleteFixture, searchQuery, setSearchQuery } = useFixtures();
     const [sortCol, setSortCol] = useState<keyof Fixture>("no");
-    const [sortAsc, setSortAsc] = useState(true);
+    const [sortAsc, setSortAsc] = useState(false); // Default to descending
 
     // Edit State
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [editingFixture, setEditingFixture] = useState<Fixture | null>(null);
 
     const filtered = fixtures.filter((f) => {
-        if (!term) return true;
-        return Object.values(f).some((v) => String(v).toUpperCase().includes(term.toUpperCase()));
+        if (!searchQuery) return true;
+        const term = searchQuery.toUpperCase();
+        return (
+            (f.vessel?.toUpperCase() || "").includes(term) ||
+            (f.charterer?.toUpperCase() || "").includes(term) ||
+            (f.owner?.toUpperCase() || "").includes(term) ||
+            (f.loadPort?.toUpperCase() || "").includes(term) ||
+            (f.dischPort?.toUpperCase() || "").includes(term) ||
+            (f.no?.toUpperCase() || "").includes(term) ||
+            (f.cargo?.toUpperCase() || "").includes(term)
+        );
     });
 
     const getRiskLevel = (dateStr: string | undefined, received: boolean | undefined) => {
@@ -135,8 +143,8 @@ export default function FixtureTable({ fixtures, isDemurrage = false, onArchive,
                 <div style={{ position: "relative" }}>
                     <Search size={14} style={{ position: "absolute", left: 10, top: "50%", transform: "translateY(-50%)", color: "var(--text-muted)" }} />
                     <input
-                        value={term}
-                        onChange={(e) => setTerm(e.target.value)}
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
                         placeholder="Quick search..."
                         className="fi"
                         style={{ width: 220, paddingLeft: 32, height: 36, borderRadius: 10, fontSize: 12 }}

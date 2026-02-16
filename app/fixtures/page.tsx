@@ -6,11 +6,11 @@ import FixtureTable from "@/components/FixtureTable";
 import { Ship, Archive as ArchiveIcon, RotateCcw } from "lucide-react";
 
 export default function FixturesPage() {
-    const { fixtures, archiveFixture, restoreFixture } = useFixtures();
+    const { filteredFixtures, archiveFixture, restoreFixture } = useFixtures();
     const [showArchived, setShowArchived] = useState(false);
 
-    const activeFixtures = fixtures.filter((f) => !f.archived);
-    const archivedFixtures = fixtures.filter((f) => f.archived);
+    const activeFixtures = filteredFixtures.filter((f) => !f.archived);
+    const archivedFixtures = filteredFixtures.filter((f) => f.archived);
 
     const displayed = showArchived ? archivedFixtures : activeFixtures;
 
