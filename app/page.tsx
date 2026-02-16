@@ -16,7 +16,7 @@ import KpiCard from "@/components/KpiCard";
 import LaycanCard from "@/components/LaycanCard";
 
 export default function Dashboard() {
-  const { fixtures, istanbulFixtures, dubaiFixtures, istDemurrage, dubDemurrage, opsUsers } = useFixtures();
+  const { fixtures, filteredIstanbul, filteredDubai, filteredIstDemurrage, filteredDubDemurrage, opsUsers } = useFixtures();
 
   // Helper to format dates to dd.mm.yyyy
   const formatDate = (dateStr: string) => {
@@ -56,7 +56,7 @@ export default function Dashboard() {
         />
         <KpiCard
           title="Istanbul Clean"
-          value={istanbulFixtures.length}
+          value={filteredIstanbul.length}
           icon={<Anchor size={20} />}
           trend="Active"
           color="#60a5fa"
@@ -64,7 +64,7 @@ export default function Dashboard() {
         />
         <KpiCard
           title="Dubai Clean"
-          value={dubaiFixtures.length}
+          value={filteredDubai.length}
           icon={<Globe size={20} />}
           trend="Active"
           color="#f59e0b"
@@ -72,7 +72,7 @@ export default function Dashboard() {
         />
         <KpiCard
           title="Demurrage"
-          value={istDemurrage.length + dubDemurrage.length}
+          value={filteredIstDemurrage.length + filteredDubDemurrage.length}
           icon={<Clock size={20} />}
           trend="Claims"
           color="#a855f7"
@@ -95,13 +95,13 @@ export default function Dashboard() {
               <div key={b} className="flex flex-col gap-2">
                 <div className="flex justify-between items-end">
                   <span className="text-xs font-bold text-[var(--text-primary)]">{b}</span>
-                  <span className="text-[10px] font-mono text-[#60a5fa]">{getBrokerCount(istanbulFixtures, b)} fixtures</span>
+                  <span className="text-[10px] font-mono text-[#60a5fa]">{getBrokerCount(filteredIstanbul, b)} fixtures</span>
                 </div>
                 <div className="h-1.5 w-full bg-[var(--border)] rounded-full overflow-hidden">
                   <div
                     className="h-full bg-[#60a5fa]"
                     style={{
-                      width: `${(getBrokerCount(istanbulFixtures, b) / 10) * 100}%`,
+                      width: `${(getBrokerCount(filteredIstanbul, b) / 10) * 100}%`,
                       boxShadow: '0 0 10px rgba(96, 165, 250, 0.3)'
                     }}
                   />
@@ -125,13 +125,13 @@ export default function Dashboard() {
               <div key={b} className="flex flex-col gap-2">
                 <div className="flex justify-between items-end">
                   <span className="text-xs font-bold text-[var(--text-primary)]">{b}</span>
-                  <span className="text-[10px] font-mono text-[#f59e0b]">{getBrokerCount(dubaiFixtures, b)} fixtures</span>
+                  <span className="text-[10px] font-mono text-[#f59e0b]">{getBrokerCount(filteredDubai, b)} fixtures</span>
                 </div>
                 <div className="h-1.5 w-full bg-[var(--border)] rounded-full overflow-hidden">
                   <div
                     className="h-full bg-[#f59e0b]"
                     style={{
-                      width: `${(getBrokerCount(dubaiFixtures, b) / 10) * 100}%`,
+                      width: `${(getBrokerCount(filteredDubai, b) / 10) * 100}%`,
                       boxShadow: '0 0 10px rgba(245, 158, 11, 0.3)'
                     }}
                   />

@@ -19,7 +19,7 @@ const BROKER_COLORS: Record<string, string> = {
 };
 
 export default function OpsPage() {
-    const { opsUsers, istanbulFixtures, dubaiFixtures } = useFixtures();
+    const { opsUsers, filteredIstanbul, filteredDubai } = useFixtures();
 
     const operators = opsUsers.filter((u) => u.role === "Operator");
     const brokers = opsUsers.filter((u) => u.role === "Broker");
@@ -29,11 +29,11 @@ export default function OpsPage() {
     brokers.forEach((b) => {
         brokerCounts[b.name] = { ist: 0, dub: 0 };
     });
-    istanbulFixtures.forEach((f) => {
+    filteredIstanbul.forEach((f) => {
         const b = f.broker.toUpperCase();
         if (brokerCounts[b]) brokerCounts[b].ist++;
     });
-    dubaiFixtures.forEach((f) => {
+    filteredDubai.forEach((f) => {
         const b = f.broker.toUpperCase();
         if (brokerCounts[b]) brokerCounts[b].dub++;
     });

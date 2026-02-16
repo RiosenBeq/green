@@ -11,9 +11,11 @@ import {
     MapPin,
     Anchor,
     ChevronRight,
+    ChevronDown,
     PanelLeftClose,
     PanelLeftOpen,
-    Menu
+    Menu,
+    ClipboardList
 } from "lucide-react";
 import { useFixtures } from "@/context/FixtureContext";
 
@@ -21,6 +23,7 @@ export default function Sidebar() {
     const pathname = usePathname();
     const { fixtures } = useFixtures();
     const [isCollapsed, setIsCollapsed] = useState(false);
+    const [isPartiesOpen, setIsPartiesOpen] = useState(false);
 
     const isActive = (path: string) => pathname === path;
 
@@ -76,41 +79,59 @@ export default function Sidebar() {
                             <LayoutDashboard size={18} />
                             <span>Dashboard</span>
                         </Link>
+                        <Link href="/todo" className={`sidebar-link ${isActive("/todo") ? "active" : ""}`}>
+                            <ClipboardList size={18} />
+                            <span>To-Do List</span>
+                        </Link>
                     </nav>
                 </div>
 
                 <div className="sidebar-section">
-                    <span className="sidebar-label">Parties</span>
-                    <div className="entity-list">
-                        {/* Grouping Owners, Charterers, Vessels under Parties as requested */}
-                        <div className="mb-2">
-                            <span className="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-widest px-4 block">Vessels</span>
-                            {topVessels.map(v => (
-                                <div key={v} className="entity-item group" title={v}>
-                                    <Ship size={14} className="opacity-40" />
-                                    <span>{v}</span>
-                                </div>
-                            ))}
+                    <button
+                        onClick={() => setIsPartiesOpen(!isPartiesOpen)}
+                        className="sidebar-label flex items-center justify-between w-full hover:text-white transition-colors"
+                        style={{ background: 'none', border: 'none', padding: '0 4px', cursor: 'pointer' }}
+                    >
+                        <span>Parties</span>
+                        {!isCollapsed && (
+                            <div className={`transition-transform duration-200 ${isPartiesOpen ? 'rotate-180' : ''}`}>
+                                <ChevronDown size={14} />
+                            </div>
+                        )}
+                    </button>
+
+                    {isPartiesOpen && (
+                        <div className="entity-list anim-fadeIn">
+                            {/* Grouping Owners, Charterers, Vessels under Parties as requested */}
+                            <div className="mb-2">
+                                <span className={`text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-widest px-4 block mb-1 ${isCollapsed ? 'hidden' : ''}`}>Vessels</span>
+                                {topVessels.map(v => (
+                                    <div key={v} className="entity-item group" title={v}>
+                                        <Ship size={14} className="opacity-40" />
+                                        <span>{v}</span>
+                                    </div>
+                                ))}
+                            </div>
+                            <div className="mb-2">
+                                <span className={`text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-widest px-4 block mb-1 ${isCollapsed ? 'hidden' : ''}`}>Charterers</span>
+                                {topCharterers.map(c => (
+                                    <div key={c} className="entity-item group" title={c}>
+                                        <Users size={14} className="opacity-40" />
+                                        <span>{c}</span>
+                                    </div>
+                                ))}
+                            </div>
+                            <div className="mb-2">
+                                <span className={`text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-widest px-4 block mb-1 ${isCollapsed ? 'hidden' : ''}`}>Owners</span>
+                                {topOwners.map(o => (
+                                    <div key={o} className="entity-item group" title={o}>
+                                        <Building2 size={14} className="opacity-40" />
+                                        <span>{o}</span>
+                                    </div>
+                                ))}
+                            </div>
                         </div>
-                        <div className="mb-2">
-                            <span className="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-widest px-4 block">Charterers</span>
-                            {topCharterers.map(c => (
-                                <div key={c} className="entity-item group" title={c}>
-                                    <Users size={14} className="opacity-40" />
-                                    <span>{c}</span>
-                                </div>
-                            ))}
-                        </div>
-                        <div className="mb-2">
-                            <span className="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-widest px-4 block">Owners</span>
-                            {topOwners.map(o => (
-                                <div key={o} className="entity-item group" title={o}>
-                                    <Building2 size={14} className="opacity-40" />
-                                    <span>{o}</span>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
+                    )}
                 </div>
 
                 <div className="sidebar-section">

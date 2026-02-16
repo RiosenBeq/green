@@ -97,13 +97,10 @@ export default function Header() {
       {/* Navigation Tabs */}
       <nav className="nav">
         <Link href="/fixtures" className={`nav-tab ${isActive("/fixtures") ? "active" : ""}`}>
-          📋 Fixtures <span className="nav-badge">{filteredFixtures.filter(f => !f.archived).length}</span>
+          📋 Ongoing <span className="nav-badge">{filteredFixtures.filter(f => !f.archived).length}</span>
         </Link>
-        <Link href="/istanbul" className={`nav-tab ${isActive("/istanbul") ? "active" : ""}`}>
-          ⚓ Istanbul <span className="nav-badge">{filteredIstanbul.length}</span>
-        </Link>
-        <Link href="/dubai" className={`nav-tab ${isActive("/dubai") ? "active" : ""}`}>
-          🌍 Dubai <span className="nav-badge">{filteredDubai.length}</span>
+        <Link href="/all-fixtures" className={`nav-tab ${isActive("/all-fixtures") ? "active" : ""}`}>
+          ⚓ All Fixtures <span className="nav-badge">{filteredIstanbul.length + filteredDubai.length}</span>
         </Link>
         <Link href="/demurrage" className={`nav-tab ${isActive("/demurrage") ? "active" : ""}`}>
           ⏰ Demurrage <span className="nav-badge">{filteredIstDemurrage.length + filteredDubDemurrage.length}</span>

@@ -16,7 +16,12 @@ import {
     Clock,
     RefreshCw,
     DollarSign,
-    X
+    X,
+    Users,
+    Info,
+    Calendar,
+    Navigation,
+    FileText
 } from "lucide-react";
 import { useFixtures } from "@/context/FixtureContext";
 
@@ -49,6 +54,7 @@ export default function FixtureTable({ fixtures, isDemurrage = false, onArchive,
 
     // Edit State
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [detailFixture, setDetailFixture] = useState<Fixture | null>(null);
     const [editingFixture, setEditingFixture] = useState<Fixture | null>(null);
 
     const filtered = fixtures.filter((f) => {
@@ -186,8 +192,14 @@ export default function FixtureTable({ fixtures, isDemurrage = false, onArchive,
                                 <tr key={f.id} className="hover:bg-[rgba(255,255,255,0.02)] transition-colors border-b border-[var(--border)]" style={{ background: f.cancelled ? "rgba(239, 68, 68, 0.08)" : "transparent" }}>
                                     <td style={{ padding: "12px", fontSize: 12, fontFamily: "var(--font-mono)", color: "var(--text-muted)" }}>{f.no}</td>
                                     <td style={{ padding: "12px" }}>
-                                        <div style={{ display: "flex", flexDirection: "column" }}>
-                                            <span style={{ fontSize: 13, fontWeight: 700, color: f.cancelled ? "var(--red-400)" : "var(--text-primary)", textDecoration: f.cancelled ? "line-through" : "none" }}>{f.vessel}</span>
+                                        <div
+                                            style={{ display: "flex", flexDirection: "column", cursor: "pointer" }}
+                                            onClick={() => setDetailFixture(f)}
+                                            className="group/vessel"
+                                        >
+                                            <span style={{ fontSize: 13, fontWeight: 700, color: f.cancelled ? "var(--red-400)" : "var(--text-primary)", textDecoration: f.cancelled ? "line-through" : "none" }} className="group-hover/vessel:text-[var(--green-400)] transition-colors">
+                                                {f.vessel}
+                                            </span>
                                             <span style={{ fontSize: 10, color: "var(--text-muted)" }}>{f.cargo} — {f.quantity}</span>
                                         </div>
                                     </td>
@@ -452,6 +464,94 @@ export default function FixtureTable({ fixtures, isDemurrage = false, onArchive,
                                     <Save size={18} /> Save All Changes
                                 </button>
                             </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+            {/* Detail Modal */}
+            {detailFixture && (
+                <div style={modalOverlayStyle} onClick={() => setDetailFixture(null)}>
+                    <div className="panel anim-fadeUp" style={{ width: "100%", maxWidth: 800, padding: 0, overflow: 'hidden' }} onClick={e => e.stopPropagation()}>
+                        <div style={{ padding: "24px 32px", background: "var(--bg-elevated)", borderBottom: "1px solid var(--border)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                            <div className="flex items-center gap-4">
+                                <div className="p-2.5 rounded-xl bg-[var(--green-500)] text-black">
+                                    <Ship size={20} />
+                                </div>
+                                <div>
+                                    <h2 style={{ fontSize: 20, fontWeight: 900, color: "white", margin: 0 }}>{detailFixture.vessel}</h2>
+                                    <p style={{ fontSize: 12, color: "var(--text-muted)", margin: 0 }}>Fixture #{detailFixture.no} · {detailFixture.id}</p>
+                                </div>
+                            </div>
+                            <button onClick={() => setDetailFixture(null)} style={{ color: "var(--text-muted)" }} className="hover:text-white transition-colors">
+                                <X size={24} />
+                            </button>
+                        </div>
+
+                        <div style={{ padding: 32, maxHeight: '80vh', overflowY: 'auto' }} className="grid grid-cols-2 gap-8">
+                            <div className="space-y-6">
+                                <section>
+                                    <h3 className="text-[10px] font-black uppercase tracking-widest text-[var(--green-500)] mb-3 flex items-center gap-2"><Users size={14} /> Cargo Parties</h3>
+                                    <div className="space-y-2 p-4 rounded-2xl bg-white/5 border border-white/5">
+                                        <div className="flex justify-between text-xs"><span>Charterer</span> <strong className="text-white">{detailFixture.charterer}</strong></div>
+                                        <div className="flex justify-between text-xs"><span>Owner</span> <strong className="text-white">{detailFixture.owner}</strong></div>
+                                        <div className="flex justify-between text-xs"><span>Broker</span> <strong className="text-white">{detailFixture.broker}</strong></div>
+                                        {detailFixture.coBroker && <div className="flex justify-between text-xs"><span>Co-Broker</span> <strong className="text-white">{detailFixture.coBroker}</strong></div>}
+                                    </div>
+                                </section>
+
+                                <section>
+                                    <h3 className="text-[10px] font-black uppercase tracking-widest text-[var(--green-500)] mb-3 flex items-center gap-2"><Navigation size={14} /> Port Logistics</h3>
+                                    <div className="space-y-2 p-4 rounded-2xl bg-white/5 border border-white/5">
+                                        <div className="flex justify-between text-xs"><span>Load Port</span> <strong className="text-white">{detailFixture.loadPort}</strong></div>
+                                        <div className="flex justify-between text-xs"><span>Disch Port</span> <strong className="text-white">{detailFixture.dischPort}</strong></div>
+                                        <div className="flex justify-between text-xs"><span>Cargo</span> <strong className="text-white">{detailFixture.cargo}</strong></div>
+                                        <div className="flex justify-between text-xs"><span>Product</span> <strong className="text-white">{detailFixture.product}</strong></div>
+                                        <div className="flex justify-between text-xs"><span>Quantity</span> <strong className="text-white">{detailFixture.quantity}</strong></div>
+                                    </div>
+                                </section>
+                                Section: Schedule & Financials
+                            </div>
+                            <div className="space-y-6">
+                                <section>
+                                    <h3 className="text-[10px] font-black uppercase tracking-widest text-[var(--green-500)] mb-3 flex items-center gap-2"><Calendar size={14} /> Execution Schedule</h3>
+                                    <div className="space-y-2 p-4 rounded-2xl bg-white/5 border border-white/5">
+                                        <div className="flex justify-between text-xs"><span>CP Date</span> <strong className="text-white">{detailFixture.cpDate}</strong></div>
+                                        <div className="flex justify-between text-xs"><span>Laycan From</span> <strong className="text-white">{detailFixture.layFrom} {detailFixture.layFromTime}</strong></div>
+                                        <div className="flex justify-between text-xs"><span>Laycan To</span> <strong className="text-white">{detailFixture.layTo} {detailFixture.layToTime}</strong></div>
+                                        <div className="flex justify-between text-xs"><span>Agreed LT</span> <strong className="text-white">{detailFixture.agreedLt}</strong></div>
+                                    </div>
+                                </section>
+
+                                <section>
+                                    <h3 className="text-[10px] font-black uppercase tracking-widest text-[var(--green-500)] mb-3 flex items-center gap-2"><DollarSign size={14} /> Financial Status</h3>
+                                    <div className="space-y-2 p-4 rounded-2xl bg-white/5 border border-white/5">
+                                        <div className="flex justify-between text-xs"><span>Commission</span> <strong className="text-white">{detailFixture.commission}</strong></div>
+                                        <div className="flex justify-between text-xs"><span>Freight</span> <strong className="text-white">{detailFixture.freight}</strong></div>
+                                        {detailFixture.demRate && (
+                                            <>
+                                                <div className="flex justify-between text-xs"><span>Demurrage Rate</span> <strong className="text-white">{detailFixture.demRate}</strong></div>
+                                                <div className="flex justify-between text-xs"><span>Dem Status</span> <span style={{ color: statusColor(detailFixture.demStatus || "Unpaid"), fontWeight: 800 }}>{(detailFixture.demStatus || "Unpaid").toUpperCase()}</span></div>
+                                            </>
+                                        )}
+                                    </div>
+                                </section>
+
+                                <section>
+                                    <h3 className="text-[10px] font-black uppercase tracking-widest text-[var(--green-500)] mb-3 flex items-center gap-2"><FileText size={14} /> Notes</h3>
+                                    <div className="p-4 rounded-xl bg-white/5 border border-white/5 text-[11px] text-[var(--text-secondary)] italic leading-relaxed">
+                                        {detailFixture.notes || "No additional notes provided for this fixture."}
+                                    </div>
+                                </section>
+                            </div>
+                        </div>
+
+                        <div style={{ padding: "24px 32px", borderTop: "1px solid var(--border)", display: "flex", justifyContent: "flex-end", gap: 12 }}>
+                            <button onClick={() => { setDetailFixture(null); handleEditClick(detailFixture); }} className="btn btn-ghost btn-sm">
+                                <Edit3 size={14} /> Edit Fixture
+                            </button>
+                            <button onClick={() => setDetailFixture(null)} className="btn btn-primary" style={{ padding: "0 40px", height: 40 }}>
+                                Close
+                            </button>
                         </div>
                     </div>
                 </div>

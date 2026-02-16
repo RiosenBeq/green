@@ -26,7 +26,7 @@ export default function FixturesPage() {
             >
                 <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
                     <Ship size={20} style={{ color: "var(--green-500)" }} />
-                    <h1 style={{ fontSize: 20, fontWeight: 800, margin: 0 }}>Fixture List</h1>
+                    <h1 style={{ fontSize: 20, fontWeight: 800, margin: 0 }}>Ongoing Fixtures</h1>
                 </div>
 
                 <div style={{ display: "flex", gap: 8 }}>
