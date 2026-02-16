@@ -1,226 +1,218 @@
 "use client";
 
 import { useFixtures } from "@/context/FixtureContext";
-import { DUBAI_BROKERS } from "@/types";
-import { Fixture } from "@/types";
-import { Anchor, Ship, Globe, Clock, TrendingUp, BarChart3, Users } from "lucide-react";
+import { Fixture, DUBAI_BROKERS } from "@/types";
+import {
+  Anchor,
+  Globe,
+  Clock,
+  Users,
+  TrendingUp,
+  Ship,
+  ChevronRight,
+  User
+} from "lucide-react";
+import KpiCard from "@/components/KpiCard";
+import LaycanCard from "@/components/LaycanCard";
 
-function BrokerBar({ name, count, max, color }: { name: string; count: number; max: number; color: string }) {
-  const pct = (count / max) * 100;
+export default function Dashboard() {
+  const { fixtures, istanbulFixtures, dubaiFixtures, istDemurrage, dubDemurrage, opsUsers } = useFixtures();
+
+  // Helper to format dates to dd.mm.yyyy
+  const formatDate = (dateStr: string) => {
+    if (!dateStr) return "—";
+    const parts = dateStr.split('-');
+    if (parts.length !== 3) return dateStr;
+    return `${parts[2]}.${parts[1]}.${parts[0]}`;
+  };
+
+  // Grouping by Operator
+  const activeFixtures = fixtures.filter(f => !f.archived && !f.cancelled);
+  const shipmentsByOperator = opsUsers
+    .filter(u => u.role === "Operator")
+    .map(op => ({
+      ...op,
+      shipments: activeFixtures.filter(f => f.operator.toUpperCase() === op.name.toUpperCase())
+    }));
+
+  // Stats
+  const istBrokers = ['BATU', 'EMRE', 'OZGUR'];
+  const dubBrokers = ['GUROL', 'YOAN'];
+
+  const getBrokerCount = (list: Fixture[], brokerName: string) =>
+    list.filter(f => f.broker.toUpperCase() === brokerName.toUpperCase()).length;
+
   return (
-    <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "8px 0" }}>
-      <div style={{ width: 70, fontWeight: 700, fontSize: 13, color: "var(--text-primary)" }}>{name}</div>
-      <div style={{ flex: 1, height: 8, background: "var(--bg-elevated)", borderRadius: 99, overflow: "hidden" }}>
-        <div
-          style={{
-            height: "100%",
-            width: `${pct}%`,
-            background: `linear-gradient(90deg, ${color}, ${color}88)`,
-            borderRadius: 99,
-            transition: "width 0.8s cubic-bezier(0.4,0,0.2,1)",
-          }}
+    <div className="flex flex-col gap-6 anim-fade">
+      {/* KPI Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <KpiCard
+          title="Total Fixtures"
+          value={fixtures.length}
+          icon={<Ship size={20} />}
+          trend="+2"
+          color="var(--green-500)"
+          gradient="linear-gradient(135deg, rgba(34, 197, 94, 0.1), transparent)"
+        />
+        <KpiCard
+          title="Istanbul Clean"
+          value={istanbulFixtures.length}
+          icon={<Anchor size={20} />}
+          trend="Active"
+          color="#60a5fa"
+          gradient="linear-gradient(135deg, rgba(96, 165, 250, 0.1), transparent)"
+        />
+        <KpiCard
+          title="Dubai Clean"
+          value={dubaiFixtures.length}
+          icon={<Globe size={20} />}
+          trend="Active"
+          color="#f59e0b"
+          gradient="linear-gradient(135deg, rgba(245, 158, 11, 0.1), transparent)"
+        />
+        <KpiCard
+          title="Demurrage"
+          value={istDemurrage.length + dubDemurrage.length}
+          icon={<Clock size={20} />}
+          trend="Claims"
+          color="#a855f7"
+          gradient="linear-gradient(135deg, rgba(168, 85, 247, 0.1), transparent)"
         />
       </div>
-      <div style={{ width: 56, textAlign: "right", fontFamily: "var(--font-mono)", fontSize: 12, color: "var(--text-muted)" }}>
-        {count} fix
-      </div>
-    </div>
-  );
-}
 
-function KpiCard({ label, value, icon, accent }: { label: string; value: number | string; icon: React.ReactNode; accent: string }) {
-  return (
-    <div
-      style={{
-        background: "var(--bg-card)",
-        border: "1px solid var(--border)",
-        borderRadius: 16,
-        padding: "22px 24px",
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-        position: "relative",
-        overflow: "hidden",
-      }}
-    >
-      <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 3, background: `linear-gradient(90deg, ${accent}, transparent)` }} />
-      <div>
-        <div style={{ fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: 1.2, color: "var(--text-muted)", marginBottom: 6 }}>{label}</div>
-        <div style={{ fontSize: 32, fontWeight: 800, color: accent, fontFamily: "var(--font-mono)" }}>{value}</div>
-      </div>
-      <div style={{ width: 48, height: 48, borderRadius: 14, background: `${accent}12`, display: "flex", alignItems: "center", justifyContent: "center", color: accent }}>
-        {icon}
-      </div>
-    </div>
-  );
-}
-
-function LaycanCard({ fixture }: { fixture: Fixture }) {
-  const now = new Date();
-  const layDate = new Date(fixture.layFrom);
-  const diffDays = Math.ceil((layDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
-
-  let statusColor = "#22c55e";
-  let statusLabel = "Upcoming";
-  if (diffDays < 0) { statusColor = "#6b7280"; statusLabel = "Started"; }
-  else if (diffDays <= 3) { statusColor = "#ef4444"; statusLabel = "Urgent"; }
-  else if (diffDays <= 7) { statusColor = "#f59e0b"; statusLabel = "Soon"; }
-
-  const isDub = DUBAI_BROKERS.includes(fixture.broker.toUpperCase());
-
-  return (
-    <div
-      style={{
-        background: "var(--bg-elevated)",
-        border: "1px solid var(--border)",
-        borderRadius: 14,
-        padding: "16px 18px",
-        transition: "all 0.2s",
-        cursor: "default",
-        borderLeft: `3px solid ${statusColor}`,
-      }}
-    >
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
-        <span style={{ fontWeight: 700, fontSize: 14, color: "var(--text-primary)" }}>{fixture.vessel}</span>
-        <span
-          style={{
-            fontSize: 10,
-            fontWeight: 700,
-            padding: "3px 8px",
-            borderRadius: 99,
-            background: `${statusColor}18`,
-            color: statusColor,
-            textTransform: "uppercase",
-            letterSpacing: 0.5,
-          }}
-        >
-          {statusLabel}
-        </span>
-      </div>
-      <div style={{ fontSize: 12, color: "var(--text-muted)", display: "grid", gridTemplateColumns: "1fr 1fr", gap: "6px 16px" }}>
-        <div><span style={{ opacity: 0.6 }}>Laycan </span><span style={{ color: "var(--text-secondary)", fontFamily: "var(--font-mono)" }}>{fixture.layFrom}</span></div>
-        <div><span style={{ opacity: 0.6 }}>Broker </span><span style={{ color: isDub ? "#f59e0b" : "#60a5fa", fontWeight: 600 }}>{fixture.broker}</span></div>
-        <div><span style={{ opacity: 0.6 }}>Cargo </span><span style={{ color: "var(--green-400)", fontWeight: 500 }}>{fixture.cargo || fixture.product || "—"}</span></div>
-        <div><span style={{ opacity: 0.6 }}>Chart. </span><span style={{ color: "var(--text-secondary)" }}>{fixture.charterer || "—"}</span></div>
-      </div>
-    </div>
-  );
-}
-
-export default function DashboardPage() {
-  const { fixtures, istanbulFixtures, dubaiFixtures, istDemurrage, dubDemurrage } = useFixtures();
-  const activeFixtures = fixtures.filter((f) => !f.archived);
-
-  // ── KPIs ──
-  const totalFixtures = activeFixtures.length;
-  const istCount = istanbulFixtures.length;
-  const dubCount = dubaiFixtures.length;
-  const demCount = istDemurrage.length + dubDemurrage.length;
-  const now = new Date();
-  const thisMonth = activeFixtures.filter((f) => {
-    if (!f.cpDate) return false;
-    const d = new Date(f.cpDate);
-    return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
-  }).length;
-
-  // ── Istanbul Broker counts (from Istanbul sheet) ──
-  const istBrokerCounts: Record<string, number> = {};
-  istanbulFixtures.forEach((f) => {
-    const b = f.broker.toUpperCase() || "UNKNOWN";
-    istBrokerCounts[b] = (istBrokerCounts[b] || 0) + 1;
-  });
-  const istBrokers = Object.entries(istBrokerCounts).sort(([, a], [, b]) => b - a);
-  const istMax = Math.max(...Object.values(istBrokerCounts), 1);
-
-  // ── Dubai Broker counts (from Dubai sheet) ──
-  const dubBrokerCounts: Record<string, number> = {};
-  dubaiFixtures.forEach((f) => {
-    const b = f.broker.toUpperCase() || "UNKNOWN";
-    dubBrokerCounts[b] = (dubBrokerCounts[b] || 0) + 1;
-  });
-  const dubBrokers = Object.entries(dubBrokerCounts).sort(([, a], [, b]) => b - a);
-  const dubMax = Math.max(...Object.values(dubBrokerCounts), 1);
-
-  // ── Upcoming laycans ──
-  const upcoming = [...activeFixtures]
-    .filter((f) => f.layFrom)
-    .sort((a, b) => new Date(a.layFrom).getTime() - new Date(b.layFrom).getTime())
-    .slice(0, 6);
-
-  return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 24 }} className="anim-fade">
-      {/* KPI Row */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 16 }}>
-        <KpiCard label="Total Fixtures" value={totalFixtures} icon={<BarChart3 size={22} />} accent="var(--green-500)" />
-        <KpiCard label="Istanbul" value={istCount} icon={<Anchor size={22} />} accent="#60a5fa" />
-        <KpiCard label="Dubai" value={dubCount} icon={<Globe size={22} />} accent="#f59e0b" />
-        <KpiCard label="Demurrage" value={demCount} icon={<Clock size={22} />} accent="#a855f7" />
-        <KpiCard label="This Month" value={thisMonth} icon={<TrendingUp size={22} />} accent="#ec4899" />
-      </div>
-
-      {/* Broker Performance — IST + DUB side by side */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
-        <div
-          style={{
-            background: "var(--bg-card)",
-            border: "1px solid var(--border)",
-            borderRadius: 16,
-            padding: "20px 24px",
-          }}
-        >
-          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16, fontSize: 14, fontWeight: 700 }}>
-            <Anchor size={16} style={{ color: "#60a5fa" }} />
-            Istanbul Brokers
-            <span style={{ marginLeft: "auto", fontSize: 11, color: "var(--text-muted)", fontFamily: "var(--font-mono)" }}>{istCount} fixtures</span>
-          </div>
-          {istBrokers.map(([broker, count]) => (
-            <BrokerBar key={broker} name={broker} count={count} max={istMax} color="#60a5fa" />
-          ))}
-        </div>
-
-        <div
-          style={{
-            background: "var(--bg-card)",
-            border: "1px solid var(--border)",
-            borderRadius: 16,
-            padding: "20px 24px",
-          }}
-        >
-          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16, fontSize: 14, fontWeight: 700 }}>
-            <Globe size={16} style={{ color: "#f59e0b" }} />
-            Dubai Brokers
-            <span style={{ marginLeft: "auto", fontSize: 11, color: "var(--text-muted)", fontFamily: "var(--font-mono)" }}>{dubCount} fixtures</span>
-          </div>
-          {dubBrokers.map(([broker, count]) => (
-            <BrokerBar key={broker} name={broker} count={count} max={dubMax} color="#f59e0b" />
-          ))}
-        </div>
-      </div>
-
-      {/* Upcoming Laycans */}
-      <div
-        style={{
-          background: "var(--bg-card)",
-          border: "1px solid var(--border)",
-          borderRadius: 16,
-          padding: "20px 24px",
-        }}
-      >
-        <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16, fontSize: 14, fontWeight: 700 }}>
-          <Ship size={16} style={{ color: "var(--green-500)" }} />
-          Upcoming Laycans
-        </div>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 12 }}>
-          {upcoming.map((f) => (
-            <LaycanCard key={f.id} fixture={f} />
-          ))}
-          {upcoming.length === 0 && (
-            <div style={{ gridColumn: "1/-1", textAlign: "center", padding: 32, color: "var(--text-muted)" }}>
-              No upcoming laycans
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Istanbul Brokers Performance */}
+        <div className="panel">
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-2">
+              <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#60a5fa', boxShadow: '0 0 10px #60a5fa' }} />
+              <h3 className="text-sm font-bold uppercase tracking-wider text-[var(--text-secondary)]">Istanbul Brokers</h3>
             </div>
-          )}
+            <TrendingUp size={16} className="text-[#60a5fa]" />
+          </div>
+          <div className="space-y-4">
+            {istBrokers.map(b => (
+              <div key={b} className="flex flex-col gap-2">
+                <div className="flex justify-between items-end">
+                  <span className="text-xs font-bold text-[var(--text-primary)]">{b}</span>
+                  <span className="text-[10px] font-mono text-[#60a5fa]">{getBrokerCount(istanbulFixtures, b)} fixtures</span>
+                </div>
+                <div className="h-1.5 w-full bg-[var(--border)] rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-[#60a5fa]"
+                    style={{
+                      width: `${(getBrokerCount(istanbulFixtures, b) / 10) * 100}%`,
+                      boxShadow: '0 0 10px rgba(96, 165, 250, 0.3)'
+                    }}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Dubai Brokers Performance */}
+        <div className="panel">
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-2">
+              <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#f59e0b', boxShadow: '0 0 10px #f59e0b' }} />
+              <h3 className="text-sm font-bold uppercase tracking-wider text-[var(--text-secondary)]">Dubai Brokers</h3>
+            </div>
+            <TrendingUp size={16} className="text-[#f59e0b]" />
+          </div>
+          <div className="space-y-4">
+            {dubBrokers.map(b => (
+              <div key={b} className="flex flex-col gap-2">
+                <div className="flex justify-between items-end">
+                  <span className="text-xs font-bold text-[var(--text-primary)]">{b}</span>
+                  <span className="text-[10px] font-mono text-[#f59e0b]">{getBrokerCount(dubaiFixtures, b)} fixtures</span>
+                </div>
+                <div className="h-1.5 w-full bg-[var(--border)] rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-[#f59e0b]"
+                    style={{
+                      width: `${(getBrokerCount(dubaiFixtures, b) / 10) * 100}%`,
+                      boxShadow: '0 0 10px rgba(245, 158, 11, 0.3)'
+                    }}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Ongoing Shipments - Grouped by Operator */}
+      <div>
+        <div className="flex items-center gap-3 mb-4">
+          <div className="p-2 rounded-lg bg-[var(--green-glow)]">
+            <Users size={18} className="text-[var(--green-500)]" />
+          </div>
+          <div>
+            <h2 className="text-lg font-bold">Ongoing Shipments</h2>
+            <p className="text-xs text-[var(--text-muted)] uppercase tracking-widest">Operator Workload</p>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {shipmentsByOperator.map((op) => (
+            <div key={op.name} className="panel" style={{ borderTop: `4px solid ${getOpColor(op.name)}`, padding: '20px' }}>
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-3">
+                  <div
+                    style={{
+                      width: 32, height: 32, borderRadius: 10,
+                      background: `${getOpColor(op.name)}15`,
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      color: getOpColor(op.name), fontWeight: 800, fontSize: 13
+                    }}
+                  >
+                    {op.name[0]}
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-bold">{op.name}</h3>
+                    <p className="text-[10px] text-[var(--text-muted)]">{op.shipments.length} vessels</p>
+                  </div>
+                </div>
+                <div className="text-[var(--green-500)] bg-[var(--green-glow)] p-1.5 rounded-full">
+                  <User size={14} />
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                {op.shipments.length > 0 ? (
+                  op.shipments.map(s => (
+                    <div key={s.id} className="p-3 rounded-xl bg-[var(--bg-elevated)] border border-[var(--border)] hover:border-[var(--green-400)] transition-all group">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-xs font-bold truncate pr-2 group-hover:text-[var(--green-400)] transition-colors">{s.vessel}</span>
+                        <span className="text-[10px] font-mono text-[var(--text-muted)] bg-[var(--bg-card)] px-1.5 rounded">{s.no}</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-[10px] text-[var(--text-muted)]">
+                        <Clock size={10} />
+                        <span>{formatDate(s.layFrom)} — {formatDate(s.layTo)}</span>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="py-8 text-center border-2 border-dashed border-[var(--border)] rounded-xl">
+                    <p className="text-[10px] text-[var(--text-muted)]">No active shipments</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </div>
   );
+}
+
+function getOpColor(name: string) {
+  const colors: Record<string, string> = {
+    BERK: "#22c55e",
+    DUYGU: "#a855f7",
+    GIZEM: "#ec4899",
+    EZGI: "#06b6d4",
+  };
+  return colors[name.toUpperCase()] || "#6b7280";
 }

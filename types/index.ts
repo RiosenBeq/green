@@ -31,6 +31,9 @@ export interface Fixture {
     agreedLt: string;
     demCcy: string;
     demAmt: string;
+    demInitialAmt: string;
+    demDiscountedAmt: string;
+    demStatus: "Paid" | "Unpaid" | "Pending";
     claimRec: string;
     claimFwd: string;
     archived?: boolean;

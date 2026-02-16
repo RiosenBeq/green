@@ -95,7 +95,7 @@ export default function DemurragePage() {
 
             {/* Table */}
             {data.length > 0 ? (
-                <FixtureTable fixtures={data} />
+                <FixtureTable fixtures={data} isDemurrage={true} />
             ) : (
                 <div
                     style={{
