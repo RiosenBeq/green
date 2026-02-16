@@ -20,7 +20,9 @@ export const MOCK_FIXTURES: Fixture[] = [
         operator: "DUYGU",
         cpDate: "2024-03-10",
         layFrom: "2024-03-15",
+        layFromTime: "16:00",
         layTo: "2024-03-18",
+        layToTime: "23:59",
         loadPort: "ISTANBUL",
         dischPort: "ROTTERDAM",
         cargo: "METHANOL",
@@ -42,9 +44,13 @@ export const MOCK_FIXTURES: Fixture[] = [
         agreedLt: "",
         demCcy: "USD",
         demAmt: "",
+        demInitialAmt: "",
+        demDiscountedAmt: "",
+        demStatus: "Unpaid",
         claimRec: "",
         claimFwd: "",
-        archived: false // Default active
+        archived: false,
+        cancelled: false
     },
     {
         id: "FX-83922",
@@ -55,7 +61,9 @@ export const MOCK_FIXTURES: Fixture[] = [
         operator: "BERK",
         cpDate: "2024-03-12",
         layFrom: "2024-03-20",
+        layFromTime: "16:00",
         layTo: "2024-03-22",
+        layToTime: "23:59",
         loadPort: "JEBEL ALI",
         dischPort: "MUMBAI",
         cargo: "BASE OIL",
@@ -77,9 +85,13 @@ export const MOCK_FIXTURES: Fixture[] = [
         agreedLt: "48",
         demCcy: "USD",
         demAmt: "",
+        demInitialAmt: "",
+        demDiscountedAmt: "",
+        demStatus: "Unpaid",
         claimRec: "",
         claimFwd: "",
-        archived: false
+        archived: false,
+        cancelled: false
     },
     {
         id: "FX-83923",
@@ -90,7 +102,9 @@ export const MOCK_FIXTURES: Fixture[] = [
         operator: "BERK",
         cpDate: "2024-01-14", // Old date -> likely finished
         layFrom: "2024-01-25",
+        layFromTime: "16:00",
         layTo: "2024-01-28",
+        layToTime: "23:59",
         loadPort: "IZMIR",
         dischPort: "BARCELONA",
         cargo: "VEG OIL",
@@ -112,8 +126,12 @@ export const MOCK_FIXTURES: Fixture[] = [
         agreedLt: "",
         demCcy: "USD",
         demAmt: "",
+        demInitialAmt: "",
+        demDiscountedAmt: "",
+        demStatus: "Paid",
         claimRec: "",
         claimFwd: "",
-        archived: true // Marked as archived for demo
+        archived: true,
+        cancelled: false
     }
 ];

@@ -40,8 +40,8 @@ export function FixtureProvider({ children }: { children: React.ReactNode }) {
     const [fixtures, setFixtures] = useState<Fixture[]>(FIXTURE_LIST_DATA);
     const [istanbulFixtures, setIstanbulFixtures] = useState<Fixture[]>(ISTANBUL_DATA);
     const [dubaiFixtures, setDubaiFixtures] = useState<Fixture[]>(DUBAI_DATA);
-    const [istDemurrage] = useState<Fixture[]>(IST_DEMURRAGE_DATA);
-    const [dubDemurrage] = useState<Fixture[]>(DUB_DEMURRAGE_DATA);
+    const [istDemurrage, setIstDemurrage] = useState<Fixture[]>(IST_DEMURRAGE_DATA);
+    const [dubDemurrage, setDubDemurrage] = useState<Fixture[]>(DUB_DEMURRAGE_DATA);
 
     const addFixture = (fixture: Fixture) => {
         setFixtures((prev) => [fixture, ...prev]);
@@ -53,6 +53,8 @@ export function FixtureProvider({ children }: { children: React.ReactNode }) {
         setFixtures(doUpdate);
         setIstanbulFixtures(doUpdate);
         setDubaiFixtures(doUpdate);
+        setIstDemurrage(doUpdate);
+        setDubDemurrage(doUpdate);
     };
 
     const archiveFixture = (id: string) => {
@@ -72,7 +74,12 @@ export function FixtureProvider({ children }: { children: React.ReactNode }) {
     };
 
     const deleteFixture = (id: string) => {
-        setFixtures((prev) => prev.filter((f) => f.id !== id));
+        const doFilter = (prev: Fixture[]) => prev.filter((f) => f.id !== id);
+        setFixtures(doFilter);
+        setIstanbulFixtures(doFilter);
+        setDubaiFixtures(doFilter);
+        setIstDemurrage(doFilter);
+        setDubDemurrage(doFilter);
     };
 
     const getFixture = (id: string) => {

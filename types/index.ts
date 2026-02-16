@@ -31,15 +31,21 @@ export interface Fixture {
     agreedLt: string;
     demCcy: string;
     demAmt: string;
-    demInitialAmt: string;
-    demDiscountedAmt: string;
-    demStatus: "Paid" | "Unpaid" | "Pending";
-    claimRec: string;
-    claimFwd: string;
+    demInitialAmt?: string;
+    demDiscountedAmt?: string;
+    demStatus?: "Paid" | "Pending" | "Unpaid";
+
+    // Commission Tracking
+    commFreightInvoiced?: boolean;
+    commFreightInvoiceDate?: string;
+    commFreightReceived?: boolean;
+    commDemInvoiced?: boolean;
+    commDemInvoiceDate?: string;
+    commDemReceived?: boolean;
+
+    // Status
     archived?: boolean;
     cancelled?: boolean;
-    createdAt?: string;
-    updatedAt?: string;
 }
 
 export interface Operator {
@@ -48,4 +54,8 @@ export interface Operator {
     role: string;
 }
 
-export const DUBAI_BROKERS = ['GUROL', 'YOAN'];
+export const BROKERS = ["GUROL", "YOAN", "BATU", "OZGUR", "EMRE"];
+export const DUBAI_BROKERS = ["YOAN", "GUROL"];
+export const ISTANBUL_BROKERS = ["BATU", "OZGUR", "EMRE"];
+export const OPERATORS = ["BERK", "DUYGU", "GIZEM", "EZGI"];
+export const DEM_STATUS = ["Paid", "Pending", "Unpaid"];

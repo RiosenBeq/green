@@ -69,7 +69,14 @@ export default function FixtureForm({ initialData, isEdit = false }: FixtureForm
             demDiscountedAmt: "",
             demStatus: "Unpaid",
             claimRec: "",
-            claimFwd: ""
+            claimFwd: "",
+            cancelled: false,
+            commFreightInvoiced: false,
+            commFreightInvoiceDate: "",
+            commFreightReceived: false,
+            commDemInvoiced: false,
+            commDemInvoiceDate: "",
+            commDemReceived: false
         }
     );
 
@@ -136,8 +143,20 @@ export default function FixtureForm({ initialData, isEdit = false }: FixtureForm
                         <Info size={120} />
                     </div>
 
-                    <div className={sectionTitleStyle}>
-                        <span>01 / Core Information</span>
+                    <div className="flex items-center justify-between mb-8">
+                        <div className={sectionTitleStyle}>
+                            <span>01 / Core Information</span>
+                        </div>
+                        {isEdit && (
+                            <label className="flex items-center gap-3 cursor-pointer group">
+                                <span className="text-[10px] font-black text-red-500 uppercase tracking-widest">Cancelled</span>
+                                <div className="relative">
+                                    <input type="checkbox" name="cancelled" checked={formData.cancelled} onChange={handleChange} className="sr-only" />
+                                    <div className={`w-10 h-5 rounded-full transition-all ${formData.cancelled ? 'bg-red-500' : 'bg-[var(--border)]'}`}></div>
+                                    <div className={`absolute top-1 left-1 w-3 h-3 rounded-full bg-white shadow-md transition-all ${formData.cancelled ? 'translate-x-5' : ''}`}></div>
+                                </div>
+                            </label>
+                        )}
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -290,10 +309,61 @@ export default function FixtureForm({ initialData, isEdit = false }: FixtureForm
                     )}
                 </section>
 
+                {/* COMMISSION TRACKING */}
+                <section className="bg-[var(--bg-card)] p-8 rounded-[2rem] border border-[var(--border)] shadow-xl relative overflow-hidden">
+                    <div className="absolute top-0 right-0 p-8 opacity-[0.03] pointer-events-none">
+                        <DollarSign size={120} />
+                    </div>
+                    <div className={sectionTitleStyle}>
+                        <DollarSign size={14} />
+                        <span>05 / Commission Tracking</span>
+                    </div>
+
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                        {/* Freight Commission */}
+                        <div className="space-y-6">
+                            <h4 className="text-[10px] font-black text-white px-3 py-1 bg-white/5 rounded-lg w-fit uppercase tracking-tighter">Comm over Freight</h4>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <label className="flex items-center gap-3 p-4 rounded-xl bg-[var(--bg-elevated)] border border-[var(--border)] cursor-pointer group hover:border-[var(--green-500)] transition-all">
+                                    <input type="checkbox" name="commFreightInvoiced" checked={formData.commFreightInvoiced} onChange={handleChange} className="w-4 h-4 rounded border-[var(--border)] text-[var(--green-500)] focus:ring-[var(--green-500)] bg-transparent" />
+                                    <span className="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider">Invoiced</span>
+                                </label>
+                                <div className={inputContainerStyle}>
+                                    <label className={labelStyle}>Invoice Date</label>
+                                    <input type="date" name="commFreightInvoiceDate" value={formData.commFreightInvoiceDate} onChange={handleChange} className={inputStyle} />
+                                </div>
+                                <label className="flex items-center gap-3 p-4 rounded-xl bg-[var(--bg-elevated)] border border-[var(--border)] cursor-pointer group hover:border-[var(--green-500)] transition-all col-span-full">
+                                    <input type="checkbox" name="commFreightReceived" checked={formData.commFreightReceived} onChange={handleChange} className="w-4 h-4 rounded border-[var(--border)] text-[var(--green-500)] focus:ring-[var(--green-500)] bg-transparent" />
+                                    <span className="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider">Received / Paid</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        {/* Demurrage Commission */}
+                        <div className="space-y-6">
+                            <h4 className="text-[10px] font-black text-white px-3 py-1 bg-white/5 rounded-lg w-fit uppercase tracking-tighter">Comm over Demurrage</h4>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <label className="flex items-center gap-3 p-4 rounded-xl bg-[var(--bg-elevated)] border border-[var(--border)] cursor-pointer group hover:border-[var(--green-500)] transition-all">
+                                    <input type="checkbox" name="commDemInvoiced" checked={formData.commDemInvoiced} onChange={handleChange} className="w-4 h-4 rounded border-[var(--border)] text-[var(--green-500)] focus:ring-[var(--green-500)] bg-transparent" />
+                                    <span className="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider">Invoiced</span>
+                                </label>
+                                <div className={inputContainerStyle}>
+                                    <label className={labelStyle}>Invoice Date</label>
+                                    <input type="date" name="commDemInvoiceDate" value={formData.commDemInvoiceDate} onChange={handleChange} className={inputStyle} />
+                                </div>
+                                <label className="flex items-center gap-3 p-4 rounded-xl bg-[var(--bg-elevated)] border border-[var(--border)] cursor-pointer group hover:border-[var(--green-500)] transition-all col-span-full">
+                                    <input type="checkbox" name="commDemReceived" checked={formData.commDemReceived} onChange={handleChange} className="w-4 h-4 rounded border-[var(--border)] text-[var(--green-500)] focus:ring-[var(--green-500)] bg-transparent" />
+                                    <span className="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider">Received / Paid</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
                 {/* NOTES */}
                 <section className="bg-[var(--bg-card)] p-8 rounded-[2rem] border border-[var(--border)] shadow-xl">
                     <div className={sectionTitleStyle}>
-                        <span>05 / Additional Notes</span>
+                        <span>06 / Additional Notes</span>
                     </div>
                     <textarea
                         name="notes"
